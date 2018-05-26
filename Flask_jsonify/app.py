@@ -81,7 +81,7 @@ def emoji():
 @app.route('/imagepush', methods=['POST'])
 def imagepush():
     r = request
-       
+    
     # convert string of image data to uint8
     nparr = np.fromstring(r.data, np.uint8)
     # decode image
@@ -94,7 +94,7 @@ def imagepush():
     #
     
     # build a response dict to send back to client
-    response = {'message': 'image received. size={}x{}'.format(img.shape[1], img.shape[0])
+    response = {'message': 'image received. size={}'.format(img.shape)
                 }
     
     # encode response using jsonpickle
@@ -102,14 +102,30 @@ def imagepush():
     
     return Response(response=response_pickled, status=200, mimetype="application/json")
 
-
 @app.route('/soundpush', methods=['POST'])
 def soundpush():
-    data = request.data  # data is empty
-    print(data)
-    # need posted data here
+    r = request
+    logging.info('Soundpush -> Data received'.format())
+
+    # convert string of data to uint8
+    nparr = np.fromstring(r.data, np.uint8)
+
+   
+    logging.info('Image received. size={}'.format(nparr.shape))
     
+    # do some fancy processing here....
+    # 
+    #
     
+    # build a response dict to send back to client
+    response = {'message': 'wav file recieved size={}'.format(nparr.shape)
+                }
+    
+    # encode response using jsonpickle
+    response_pickled = jsonpickle.encode(response)
+    
+    return Response(response=response_pickled, status=200, mimetype="application/json")
+
 if __name__ == "__main__":
         app.run(host='0.0.0.0', debug=True)
 
