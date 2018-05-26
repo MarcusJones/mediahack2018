@@ -103,15 +103,16 @@ def soundpush():
     
     logging.info('MOCK Soundpush MOCK-> Data received'.format())
     print(r)
-    print(r.data)
+    
     for i in dir(r):
         print(i)
-    print(r.content_type)
-    print(r.content_encoding)
-    print(r.content_length)
-    print(r.encoding)
-    print(r.form)
+    #print(r.content_type)
+    #print(r.content_encoding)
+    #print(r.content_length)
+    #print(r.encoding)
+    #print(r.form)
     # convert string of data to uint8
+    print(r.data)
     nparr = np.fromstring(r.data, np.uint8)
     
     logging.info('Audio data received. size={}'.format(nparr.shape))
