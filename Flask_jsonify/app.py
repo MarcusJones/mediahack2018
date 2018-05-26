@@ -50,7 +50,6 @@ def sentiment():
     logging.info("Returning sentiment: {} ".format(data))
     return response
 
-
 @app.route('/emoji')
 def emoji():
     sent = sentiment().json
@@ -74,8 +73,6 @@ def emoji():
     logging.info("Returning emoji: {}".format(data))
     
     return response
-
-
 
 
 @app.route('/imagepush', methods=['POST'])
@@ -125,6 +122,34 @@ def soundpush():
     response_pickled = jsonpickle.encode(response)
     
     return Response(response=response_pickled, status=200, mimetype="application/json")
+
+
+
+@app.route('/soundpush_wav', methods=['POST'])
+def soundpush_wav():
+    r = request
+    logging.info('Soundpush -> Data received'.format())
+
+    # convert string of data to uint8
+    nparr = np.fromstring(r.data, np.uint8)
+
+   
+    logging.info('Image received. size={}'.format(nparr.shape))
+    
+    # do some fancy processing here....
+    # 
+    #
+    
+    # build a response dict to send back to client
+    response = {'message': 'wav file recieved size={}'.format(nparr.shape)
+                }
+    
+    # encode response using jsonpickle
+    response_pickled = jsonpickle.encode(response)
+    
+    return Response(response=response_pickled, status=200, mimetype="application/json")
+
+
 
 if __name__ == "__main__":
         app.run(host='0.0.0.0', debug=True)
