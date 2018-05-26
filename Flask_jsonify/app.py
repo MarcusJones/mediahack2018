@@ -10,11 +10,16 @@ import operator
 
 import jsonpickle
 import numpy as np
-import cv2
+#import cv2
+
+from flask_cors import CORS
 
 logging.debug("Started logging")
 
+# Create app
 app = Flask(__name__)
+# Enable Cross Origin Resource Sharing
+CORS(app)
 
 EMOJI_MAP = {
         'happy'     :   'Happy! :)     http://url_happy',
@@ -22,10 +27,6 @@ EMOJI_MAP = {
         'neutral'   :   '-neutral- :| http://url_neutral',
         'angry'     :   'ANGRY!!! >:(     http://url_happy', 
     }
-
-
-
-
 
 @app.route("/")
 def index():
@@ -153,9 +154,6 @@ def soundpush_wav():
 
 if __name__ == "__main__":
         app.run(host='0.0.0.0', debug=True)
-
-
-
 
 
 
