@@ -1,5 +1,2 @@
-EXAMPLE DATA SETSYou are hereHomeXLMiner Online Help
-A! ! statistician often comes across huge volumes of information from which to draw inferences. Since time and cost limitations make it impossible to go through every entry in these enormous data sets, statisticians must resort to sampling techniques.  These sampling techniques choose a reduced sample or subset from the complete data set.  The statistician can then perform statistical procedures on .!this reduced data set saving much time and money.
+A statistician often comes across huge volumes of information from which to draw inferences. Since time and cost limitations make it impossible to go through every entry in these enormous data sets, statisticians must resort to sampling techniques.  These sampling techniques choose a reduced sample or subset from the complete data set.  The statistician can then perform statistical procedures on this reduced data set saving much time and money.
 
-The entire data set is called the population. A sample is the portion of the population that is actually examined. A good sample should be a true representation of the population to avoid forming misleading conclusions.  Various methods and techniques have been developed to ensure a representative sample is chosen from the population. A few are discussed here
-© 2018 GitHub, Inc.!!!
