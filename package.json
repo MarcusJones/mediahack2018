@@ -1,0 +1,50 @@
+{
+  "name": "souns",
+  "version": "1.0.0",
+  "description": "A simple audio to content tool.",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack --config webpack.config.js --mode=development",
+    "watch": "webpack-dev-server --mode=development",
+    "deploy hosting": "webpack --config webpack.config.js --mode=production && firebase deploy --only hosting",
+    "deploy all": "webpack --config webpack.config.js --mode=production && firebase deploy"
+  },
+  "babel": {
+    "presets": [
+      "env",
+      "react",
+      "babel-preset-stage-2"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarcusJones/mediahack2018.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MarcusJones/mediahack2018/issues"
+  },
+  "homepage": "https://github.com/MarcusJones/mediahack2018#readme",
+  "dependencies": {
+    "firebase": "^5.0.4",
+    "jquery": "^3.3.1",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "clean-webpack-plugin": "^0.1.19",
+    "css-loader": "^0.28.11",
+    "file-loader": "^1.1.11",
+    "html-webpack-plugin": "^3.2.0",
+    "style-loader": "^0.21.0",
+    "webpack": "^4.9.1",
+    "webpack-cli": "^2.1.4",
+    "webpack-dev-server": "^3.1.4"
+  }
+}
