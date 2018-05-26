@@ -3,7 +3,10 @@ from flask import jsonify
 import json
 import numpy as np
 import random
+import os
 import logging
+from time import gmtime, strftime
+import datetime
 #from astropy._erfa.core import ld
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)8s %(message)s',
@@ -104,27 +107,52 @@ def soundpush():
     logging.info('MOCK Soundpush MOCK-> Data received'.format())
     print(r)
     
-    for i in dir(r):
-        print(i)
+    #for i in dir(r):
+    #    print(i)
     #print(r.content_type)
     #print(r.content_encoding)
     #print(r.content_length)
     #print(r.encoding)
-    #print(r.form)
+    print("FORM",r.form)
+    try:
+        print("FILES", r.files)
+    except:
+        pass
     # convert string of data to uint8
-    print(r.data)
-    nparr = np.fromstring(r.data, np.uint8)
     
-    logging.info('Audio data received. size={}'.format(nparr.shape))
+    print("DATA",r.data)
+    
+    file = request.files['data']
+    
+    
+    currtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    
+    # if user does not select file, browser also
+    # submit a empty part without filename
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    if file:
+        filename = file.filename
+        print("FILENAME",filename)
+        file.save(os.path.join('./SERVER INCOMING', 'audio'+currtime))
+        #return redirect(url_for('uploaded_file',
+        #                        filename=filename))    
+    
+    
+    
+    #nparr = np.fromstring(r.data, np.uint8)
+    
+    #logging.info('Audio data received. size={}'.format(nparr.shape))
     
     # do some fancy processing here....
     # 
     #
     
     # build a response dict to send back to client
-    response = {'message': 'wav file recieved size={}'.format(nparr.shape)
-                }
-    
+    #response = {'message': 'wav file recieved size={}'.format(nparr.shape)}
+    response = {'message': 'wav file recieved'}
+
     # encode response using jsonpickle
     response_pickled = jsonpickle.encode(response)
     
