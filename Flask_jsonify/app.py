@@ -5,7 +5,11 @@ import numpy as np
 import random
 import logging
 #from astropy._erfa.core import ld
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)8s %(message)s',
+                    datefmt="%Y-%m-%d %H:%M:%S",
+                    )
+
 import operator
 
 import jsonpickle
@@ -54,16 +58,9 @@ def sentiment():
 @app.route('/emoji')
 def emoji():
     sent = sentiment().json
-    #print(sent.text)
-    #for i in dir(sent):
-    #    print(i)
-    #print(sent.json)
-    #print(sent.response)
+
     max_sentiment_key = max(sent.items(), key=operator.itemgetter(1))[0]
-    #print(maxres)
-    #emotions = ['Happy! :)', 'Sad :*(', 'ANGRY!!! >:(']
-    #print(random.choice(foo))
-    
+
     data = EMOJI_MAP[max_sentiment_key]
     
     response = app.response_class(
@@ -103,13 +100,21 @@ def imagepush():
 @app.route('/soundpush', methods=['POST'])
 def soundpush():
     r = request
-    logging.info('Soundpush -> Data received'.format())
-
+    
+    logging.info('MOCK Soundpush MOCK-> Data received'.format())
+    print(r)
+    print(r.data)
+    for i in dir(r):
+        print(i)
+    print(r.content_type)
+    print(r.content_encoding)
+    print(r.content_length)
+    print(r.encoding)
+    print(r.form)
     # convert string of data to uint8
     nparr = np.fromstring(r.data, np.uint8)
-
-   
-    logging.info('Image received. size={}'.format(nparr.shape))
+    
+    logging.info('Audio data received. size={}'.format(nparr.shape))
     
     # do some fancy processing here....
     # 
@@ -123,8 +128,6 @@ def soundpush():
     response_pickled = jsonpickle.encode(response)
     
     return Response(response=response_pickled, status=200, mimetype="application/json")
-
-
 
 @app.route('/soundpush_wav', methods=['POST'])
 def soundpush_wav():
