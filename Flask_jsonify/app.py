@@ -28,10 +28,6 @@ EMOJI_MAP = {
         'angry'     :   'ANGRY!!! >:(     http://url_happy', 
     }
 
-
-
-
-
 @app.route("/")
 def index():
         return render_template("index.html")
