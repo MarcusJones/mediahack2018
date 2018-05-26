@@ -135,8 +135,13 @@ logging.info("{} files entered in database, {} discarded".format(len(entries),le
 
 #%% Create a DF
 df = pd.DataFrame(entries)
-out_path = "./Marcus index.csv"
+out_path = "./Marcus_index.csv"
 df.to_csv(out_path)
+
+
+df['emotion_label'].value_counts()
+df['Statement'].value_counts()
+
 
 #%% ===========================================================================
 #  Load Train and Test data
