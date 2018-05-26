@@ -1,3 +1,6 @@
 
 
 conda install -c menpo opencv3 
+
+
+https://console.cloud.google.com/networking/firewalls/list?_ga=2.213383186.-789831953.1524807779&_gac=1.162510286.1524817700.Cj0KCQjw8YXXBRDXARIsAMzsQuX3JNQLzeJYsE9Fn1WQDwQPWViwiUde_Tsi7majfJU0NHQVCWUPLj4aAuanEALw_wcB&project=ai-drive-storage-test&folder&organizationId&tab=INGRESS
