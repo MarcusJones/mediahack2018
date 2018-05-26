@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Souns</title>
+  </head>
+  <body>
+
+    <div id="mainApp"></div>
+
+    <% for (let file in htmlWebpackPlugin.files.js) { %>
+    <script type="text/javascript" src="<%= htmlWebpackPlugin.files.js[file] %>"></script>
+    <% } %>
+  </body>
+</html>
