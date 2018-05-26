@@ -1,0 +1,2 @@
+A statistician often comes across huge volumes of information from which to draw inferences. Since time and cost limitations make it impossible to go through every entry in these enormous data sets, statisticians must resort to sampling techniques.  These sampling techniques choose a reduced sample or subset from the complete data set.  The statistician can then perform statistical procedures on this reduced data set saving much time and money.
+
