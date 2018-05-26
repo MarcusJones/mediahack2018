@@ -135,7 +135,8 @@ logging.info("{} files entered in database, {} discarded".format(len(entries),le
 
 #%% Create a DF
 df = pd.DataFrame(entries)
-
+out_path = "./Marcus index.csv"
+df.to_csv(out_path)
 
 #%% ===========================================================================
 #  Load Train and Test data
