@@ -5,16 +5,13 @@ from nltk.stem import PorterStemmer
 import string
 from string import punctuation
 
-
 ps = PorterStemmer()
 stemmer = SnowballStemmer('english')
 stopWords = set(stopwords.words('english'))
-file_name=input("file name= ")
+file_name = input("file name= ")
 file = open(file_name, 'r')
 
-text=file.read()
-
-
+text = file.read()
 
 words = word_tokenize(text)
 
@@ -40,8 +37,7 @@ for sentence in sentences:
                 sentenceValue[sentence] += freq
             else:
                 sentenceValue[sentence] = freq
-        
-        
+
 sumValues = 0
 for sentence in sentenceValue:
     sumValues += sentenceValue[sentence]
@@ -51,27 +47,26 @@ average = int(sumValues / len(sentenceValue))
 
 summary = ""
 for sentence in sentences:
-    if len(words)>500:
+    if len(words) > 500:
         if sentence in sentenceValue and sentenceValue[sentence] > (1.5 * average):
             summary += " " + sentence
     else:
         if sentence in sentenceValue and sentenceValue[sentence] > (1.3 * average):
             summary += " " + sentence
-        
 
 # print(summary)
-f = open('output.txt','w')
+f = open('output.txt', 'w')
 f.write(summary)
 
 ###################################
 
-w=""
+w = ""
 words = summary.split()
 for word in words:
     if not word in stopWords:
-        word  = ps.stem(word)
-        w+=" "+word
-        
+        word = ps.stem(word)
+        w += " " + word
+
 print("=====================  text summarization with stemming  =====================")
 print(w)
 print("\n")
