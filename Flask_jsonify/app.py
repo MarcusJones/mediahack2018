@@ -166,20 +166,10 @@ def process_audio(fpath):
     return TEMP_ARRAY
 
 def get_files_by_name_ext(folder_path, search_name, search_ext):
-#     all_files = list()
-#     for root, dirs, files in os.walk(folder_path):
-#         for this_name in files:
-#             thisFilePath = os.path.join(root, this_name)
-#             all_files.append(thisFilePath)
-#
-    #files =
 
     # Filter
     all_files = os.listdir(folder_path)
     filtered_file_list = [f for f in os.listdir(folder_path) if re.match(r'^audio.*\.audio', f)]
-
-    #for f in os.listdir(folder_path):
-    #    print(f)
 
     #print(filtered_file_list)
     logging.info("Found {} {} files matching '{}' in {}, out of {} total files".format(len(filtered_file_list),
@@ -191,15 +181,11 @@ def get_files_by_name_ext(folder_path, search_name, search_ext):
     return filtered_file_list
 
 
-
-
 def predict(audio_array):
     logging.info("Predicting on array {}".format(audio_array.shape))
 
 def save_file(file_object):
     currtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    #logging.info()
-    #filename = file.filename
     path_audio_file_saved = os.path.join('./SERVER INCOMING', 'audio'+currtime)
     try:
         file.save(path_audio_file_saved)
@@ -267,30 +253,17 @@ def soundpush():
 
     #-------------------------------------------------------------- Return emoji
     this_emoji = emoji_from_senti(senti_vector)
-    # build a response dict to send back to client
-    #response = {'message': 'wav file recieved size={}'.format(nparr.shape)}
+    
+    #------------------------------------------------------------ Build response
     response = {'message': 'audio file recieved', 'emoji':this_emoji}
 
-    # encode response using jsonpickle
+    #----------------------------------------------------------- Return response
     response_pickled = jsonpickle.encode(response)
 
     return Response(response=response_pickled, status=200, mimetype="application/json")
 
 
 
-
-
 if __name__ == "__main__":
         app.run(host='0.0.0.0', debug=True)
-
-
-
-# from flask import Flask, request, Response
-# import jsonpickle
-# import numpy as np
-# import cv2
-#
-# # Initialize the Flask application
-# app = Flask(__name__)
-
 
