@@ -7,6 +7,7 @@ import os
 import logging
 from time import gmtime, strftime
 import datetime
+from contextlib import suppress
 #import glob
 import re
 #from astropy._erfa.core import ld
@@ -222,15 +223,17 @@ def predict(model,proc_audio_data):
 @app.route('/soundpush', methods=['POST'])
 def soundpush():
     r = request
-
+    
     logging.info('POST to /soundpush {} '.format(r.content_type))
 
     #print("DATA",r.data)
     logging.info('content_type: {}'.format(r.content_type))
-
-    logging.info('form attrib: {}'.format(r.form))
-    logging.info('data attrib: {}'.format(r.data))
-    logging.info('files attrib: {}'.format(r.files))
+    with suppress(Exception):
+        logging.info('form attrib: {}'.format(r.form))
+    with suppress(Exception):
+        logging.info('data attrib: {}'.format(r.data))
+    with suppress(Exception):        
+        logging.info('files attrib: {}'.format(r.files))
 
     #------------------------------------------------------------------ Get file
     if 'data' in r.files:
