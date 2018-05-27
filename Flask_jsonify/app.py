@@ -127,28 +127,15 @@ def reload_audio(folder_path):
     
     #result = np.load(path_most_recent)
     
-    blocksize = 1024
+    blocksize = 1024*100 # Bytes
     
     #offset = 0
+    cnt = 0
     with open(path_most_recent, "rb") as f:
-        block = f.read(blocksize)
-        str = ""
-        print(len(block))
-        #for ch in block:
-        #    str += hex(ord(ch))+" "
-        print(str)    
-#         
-#     
-#     try:
-#         byte = f.read(1)
-#         while byte != "":
-#             # Do stuff with byte.
-#             byte = f.read(1)
-#     finally:
-#         f.close()
-#         
-#     print(byte)
-#     
+        bdata = f.read(blocksize)
+    logging.info("{} kB loaded".format(len(bdata)/1000))
+    
+    return bdata
 
         
 def process_audio(fpath):
@@ -178,7 +165,7 @@ def get_files_by_name_ext(folder_path, search_name, search_ext):
     #for f in os.listdir(folder_path):
     #    print(f)
     
-    print(filtered_file_list)
+    #print(filtered_file_list)
     logging.info("Found {} {} files matching '{}' in {}, out of {} total files".format(len(filtered_file_list),
                                                                            search_ext,
                                                                            search_name, 
@@ -206,6 +193,19 @@ def save_file(file_object):
   
     return 
 
+def get_model(path_wts):
+    """
+    Model architecture
+    """
+    
+    # path_wts
+    
+    
+    return # Return the model for .predict()
+
+def predict(model,proc_audio_data):
+    return [] # Sentiment vector
+
 @app.route('/soundpush', methods=['POST'])
 def soundpush():
     r = request
@@ -232,6 +232,18 @@ def soundpush():
     
     #-------------------------------------------------------------------- Reload
     audio_data = reload_audio("./SERVER INCOMING")
+    
+    #---------------------------------------------------------------- Preprocess
+    proc_audio_data = process_audio(audio_data)
+    
+    #-------------------------------------------------------- Predict sentimenet
+    path_wts
+    model = get_model(path_wts)
+    senti_vector = predict(model,proc_audio_data)
+    
+    #-------------------------------------------------------------- Return emoji
+    
+    
     
     
     
