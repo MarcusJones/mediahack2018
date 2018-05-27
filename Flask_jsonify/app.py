@@ -27,7 +27,7 @@ logging.debug("Started logging")
 app = Flask(__name__)
 
 # Enable Cross Origin Resource Sharing
-#CORS(app)
+CORS(app)
 
 EMOJI_MAP = {
         'happy'     :   'Happy! :)     http://url_happy',
