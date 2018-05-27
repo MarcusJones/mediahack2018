@@ -12,11 +12,9 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)8s %(message)s',
                     datefmt="%Y-%m-%d %H:%M:%S",
                     )
-
 import operator
-
 import jsonpickle
-import numpy as np
+#import numpy as np
 #import cv2
 
 from flask_cors import CORS
@@ -25,8 +23,9 @@ logging.debug("Started logging")
 
 # Create app
 app = Flask(__name__)
+
 # Enable Cross Origin Resource Sharing
-CORS(app)
+#CORS(app)
 
 EMOJI_MAP = {
         'happy'     :   'Happy! :)     http://url_happy',
@@ -100,42 +99,56 @@ def imagepush():
     
     return Response(response=response_pickled, status=200, mimetype="application/json")
 
+def process_audio(fpath):
+
+    # Load the file
+    #TODO: This is my todo.
+    logging.info("Loaded {}".format(fpath))
+    
+    # Convert to np.arr
+    TEMP_ARRAY = np.zeros((3, 3))
+     
+    return TEMP_ARRAY
+
+def predict(audio_array):
+    logging.info("Predicting on array {}".format(audio_array.shape))
+
 @app.route('/soundpush', methods=['POST'])
 def soundpush():
     r = request
     
-    logging.info('MOCK Soundpush MOCK-> Data received'.format())
-    print(r)
+    logging.info('POST to /soundpush {} '.format(r.content_type))
     
-    #for i in dir(r):
-    #    print(i)
-    #print(r.content_type)
-    #print(r.content_encoding)
-    #print(r.content_length)
-    #print(r.encoding)
-    print("FORM",r.form)
-    try:
-        print("FILES", r.files)
-    except:
-        pass
-    # convert string of data to uint8
+    #print("DATA",r.data)
+    logging.info('content_type: {}'.format(r.content_type))
     
-    print("DATA",r.data)
+    logging.info('form attrib: {}'.format(r.form))
+    logging.info('data attrib: {}'.format(r.data))
+    logging.info('files attrib: {}'.format(r.files))
     
-    file = request.files['data']
+    if 'data' in r.files:
+        file = r.files['data']
+    else:
+        raise
+        file = 'MOCK'
+        logging.info('MOCK DATA MOCK'.format())
+        
     
     
-    currtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    currtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     # if user does not select file, browser also
     # submit a empty part without filename
-    if file.filename == '':
-        flash('No selected file')
-        return redirect(request.url)
+    #if file.filename == '':
+    #    flash('No selected file')
+    #    logging.info('No selected file'.format())
+    #    return redirect(r.url)
+    
     if file:
-        filename = file.filename
-        print("FILENAME",filename)
-        file.save(os.path.join('./SERVER INCOMING', 'audio'+currtime))
+        #filename = file.filename
+        path_audio_file_saved = os.path.join('./SERVER INCOMING', 'audio'+currtime)
+        logging.info("File saved; {}".format(path_audio_file_saved))
+        file.save(path_audio_file_saved)
         #return redirect(url_for('uploaded_file',
         #                        filename=filename))    
     
@@ -151,32 +164,68 @@ def soundpush():
     
     # build a response dict to send back to client
     #response = {'message': 'wav file recieved size={}'.format(nparr.shape)}
-    response = {'message': 'wav file recieved'}
+    response = {'message': 'audio file recieved'}
 
     # encode response using jsonpickle
     response_pickled = jsonpickle.encode(response)
     
     return Response(response=response_pickled, status=200, mimetype="application/json")
 
-@app.route('/soundpush_wav', methods=['POST'])
-def soundpush_wav():
+
+
+@app.route('/soundpushMOCK', methods=['POST'])
+def soundpushMOCK():
     r = request
-    logging.info('Soundpush -> Data received'.format())
-
-    # convert string of data to uint8
-    nparr = np.fromstring(r.data, np.uint8)
-
-   
-    logging.info('Image received. size={}'.format(nparr.shape))
+    
+    logging.info('POST to /soundpush {} '.format(r.content_type))
+    
+    #print("DATA",r.data)
+    logging.info('content_type: {}'.format(r.content_type))
+    
+    logging.info('form attrib: {}'.format(r.form))
+    logging.info('data attrib: {}'.format(r.data))
+    logging.info('files attrib: {}'.format(r.files))
+    
+    if 'data' in r.files:
+        file = r.files['data']
+    else:
+        raise
+        file = 'MOCK'
+        logging.info('MOCK DATA MOCK'.format())
+        
+    
+    
+    currtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # if user does not select file, browser also
+    # submit a empty part without filename
+    #if file.filename == '':
+    #    flash('No selected file')
+    #    logging.info('No selected file'.format())
+    #    return redirect(r.url)
+    
+    if file:
+        #filename = file.filename
+        path_audio_file_saved = os.path.join('./SERVER INCOMING', 'audio'+currtime)
+        logging.info("File saved; {}".format(path_audio_file_saved))
+        file.save(path_audio_file_saved)
+        #return redirect(url_for('uploaded_file',
+        #                        filename=filename))    
+    
+    
+    
+    #nparr = np.fromstring(r.data, np.uint8)
+    
+    #logging.info('Audio data received. size={}'.format(nparr.shape))
     
     # do some fancy processing here....
     # 
     #
     
     # build a response dict to send back to client
-    response = {'message': 'wav file recieved size={}'.format(nparr.shape)
-                }
-    
+    #response = {'message': 'wav file recieved size={}'.format(nparr.shape)}
+    response = {'message': 'audio file recieved'}
+
     # encode response using jsonpickle
     response_pickled = jsonpickle.encode(response)
     
@@ -189,14 +238,12 @@ if __name__ == "__main__":
 
 
 
-
-
-from flask import Flask, request, Response
-import jsonpickle
-import numpy as np
-import cv2
-
-# Initialize the Flask application
-app = Flask(__name__)
+# from flask import Flask, request, Response
+# import jsonpickle
+# import numpy as np
+# import cv2
+# 
+# # Initialize the Flask application
+# app = Flask(__name__)
 
 
