@@ -17,6 +17,20 @@ from skimage.transform import resize
 
 import pyglet
 
+
+
+
+from OpenSSL import SSL
+context = SSL.Context(SSL.SSLv23_METHOD)
+context.use_privatekey_file('server.key')
+context.use_certificate_file('server.crt')
+
+
+
+
+
+
+
 #from astropy._erfa.core import ld
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(funcName)25s() %(levelname)-9s %(message)s',
@@ -327,5 +341,4 @@ def soundpush():
 
 
 if __name__ == "__main__":
-        app.run(host='0.0.0.0', debug=True)
-
+        app.run(host='0.0.0.0', debug=True, ssl_context=context)
