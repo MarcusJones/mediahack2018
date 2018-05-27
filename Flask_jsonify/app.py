@@ -218,7 +218,7 @@ def get_files_by_name_ext(folder_path, search_name, search_ext):
 
     # Filter
     all_files = os.listdir(folder_path)
-    filtered_file_list = [f for f in os.listdir(folder_path) if re.match(r'^audio.*\.ogg', f)]
+    filtered_file_list = [f for f in os.listdir(folder_path) if re.match(r'^audio.*\.audio', f)]
     
     #print(filtered_file_list)
     logging.info("Found {} {} files matching '{}' in {}, out of {} total files".format(len(filtered_file_list),
