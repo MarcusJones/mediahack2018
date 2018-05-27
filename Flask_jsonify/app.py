@@ -11,9 +11,11 @@ from contextlib import suppress
 #import glob
 import re
 from keras.models import load_model
-import cv2
+#import cv2
 import librosa
 from skimage.transform import resize
+
+import pyglet
 
 #from astropy._erfa.core import ld
 logging.basicConfig(level=logging.DEBUG,
@@ -121,7 +123,7 @@ def imagepush():
     # convert string of image data to uint8
     nparr = np.fromstring(r.data, np.uint8)
     # decode image
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    #img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     logging.info('Image received. size={}'.format(img.shape))
 
@@ -138,52 +140,65 @@ def imagepush():
 
     return Response(response=response_pickled, status=200, mimetype="application/json")
 
-def reload_audio(folder_path):
-    logging.info("Retrieving audio from {}".format(folder_path))
+def load_as_binary(path_file):
+    blocksize = 1024*100 # Bytes
+    #offset = 0
+    cnt = 0
+    with open(path_file, "rb") as f:
+        bdata = f.read(blocksize)
+    logging.info("{} kB loaded".format(len(bdata)/1000))
+    return bdata
+
+def load_as_wav(path_file):
+    path_file = os.path.abspath(path_file)
+    logging.info("Loading {}...".format(path_file))
+    #aud = pyglet.media.load(path_file, streaming=False)
+    #song.play()
+    #pyglet.app.run()
+    #print(aud)
+
+    return
+
+def get_audio_file(folder_path):
     audio_files = get_files_by_name_ext(folder_path,'audio','audio')
     
     dated_list = list()
     for f in audio_files:
         fname, _ = os.path.splitext(f)
 
-        #print(fname)
         fname = fname.replace('audio','')
-        #print(fname)
         this_timestamp = datetime.datetime.strptime(fname, "%Y-%m-%d %H:%M:%S")
-        #print(this_timestamp)
         dated_list.append((this_timestamp,f))
 
-    #print(dated_list)
     dated_list = sorted(dated_list, key=lambda x: x[0])
-    #print(dated_list)
     most_recent = dated_list.pop()
-    #print(most_recent)
     logging.info("Most recent audio file {}".format(most_recent[1]))
-
     path_most_recent = os.path.join(folder_path,most_recent[1])
+    return path_most_recent
 
-    #result = np.load(path_most_recent)
-
-    blocksize = 1024*100 # Bytes
-
-    #offset = 0
-    cnt = 0
-    with open(path_most_recent, "rb") as f:
-        bdata = f.read(blocksize)
-    logging.info("{} kB loaded".format(len(bdata)/1000))
+def reload_audio(folder_path):
+    logging.info("Retrieving audio from {}".format(folder_path))
     
-    #np_bdata = np.frombuffer(bdata,dtype=np.uint8)
-    byte_type = np.uint8
-    np_bdata = np.frombuffer(bdata,dtype=byte_type)
-    logging.debug("Returning raw data as numpy array {}: {}".format(byte_type,np_bdata))
+    #--------------------------------------------------------- Get the file name
+    path_most_recent = get_audio_file(folder_path)
+    
+    #------------------------------------------------- Different loading formats
+    #data = load_as_binary(path_most_recent)
+    data = load_as_wav(path_most_recent) 
+    
+    #---------------------------------------------------------- Convert to numpy
+    if 0:
+        byte_type = np.uint8
+        np_bdata = np.frombuffer(data,dtype=byte_type)
+        logging.debug("Converted raw data to numpy array {}: {}".format(byte_type,np_bdata))
         
-    return np_bdata
+    return data
 
 def get_log_melspectrum(data, sample_rate=48000):
     melspectrum = librosa.feature.melspectrogram(data, sample_rate)
     log_melspec = librosa.power_to_db(melspectrum, ref=np.max)
     scaled_spec = 1.0 - np.divide(log_melspec, -80.0)
-    logging.debug("Processed log mel spectrum".format())    
+    logging.debug("Processed log mel spectrum".format())
     return resize(scaled_spec, (128, 128)).reshape(128, 128, 1)
 
 
@@ -192,7 +207,7 @@ def process_audio(audio_array):
     
     # Load the file
     #TODO: This is my todo.
-    logging.info("Loaded {}".format(fpath))
+    #logging.info("Loaded {}".format(fpath))
 
     # Convert to np.arr
     TEMP_ARRAY = np.zeros((3, 3))
@@ -203,7 +218,7 @@ def get_files_by_name_ext(folder_path, search_name, search_ext):
 
     # Filter
     all_files = os.listdir(folder_path)
-    filtered_file_list = [f for f in os.listdir(folder_path) if re.match(r'^audio.*\.audio', f)]
+    filtered_file_list = [f for f in os.listdir(folder_path) if re.match(r'^audio.*\.ogg', f)]
     
     #print(filtered_file_list)
     logging.info("Found {} {} files matching '{}' in {}, out of {} total files".format(len(filtered_file_list),
@@ -215,8 +230,8 @@ def get_files_by_name_ext(folder_path, search_name, search_ext):
     return filtered_file_list
 
 
-def predict(audio_array):
-    logging.info("Predicting on array {}".format(audio_array.shape))
+#def predict(audio_array):
+#    logging.info("Predicting on array {}".format(audio_array.shape))
     
 def save_file(file_object):
     currtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -236,7 +251,7 @@ def get_model(path_wts):
     """
     Model architecture
     """
-    
+    pass
     #logging.info("Intantiated model".format())
     #logging.info("Applied model weights".format())
 
