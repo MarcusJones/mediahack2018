@@ -147,6 +147,11 @@ def reload_audio(folder_path):
         bdata = f.read(blocksize)
     logging.info("{} kB loaded".format(len(bdata)/1000))
 
+    
+    #np_bdata = np.frombuffer(bdata,dtype=np.uint8)
+    np_bdata = np.frombuffer(bdata,dtype=np.float64)
+    print(np_bdata)
+    
     return bdata
 
 def process_audio(fpath):
@@ -193,7 +198,7 @@ def predict(audio_array):
 
 def save_file(file_object):
     currtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
+    #logging.info()
     #filename = file.filename
     path_audio_file_saved = os.path.join('./SERVER INCOMING', 'audio'+currtime)
     try:
@@ -208,10 +213,13 @@ def get_model(path_wts):
     """
     Model architecture
     """
+    logging.info("Loading model from {}".format(path_wts))
+    
+    model = load_model(path_wts)
 
-    logging.info("Intantiated model".format())
-    logging.info("Loaded weights from {}".format(path_wts))
-    logging.info("Applied model weights".format())
+    
+    #logging.info("Intantiated model".format())
+    #logging.info("Applied model weights".format())
 
     return # Return the model for .predict()
 
@@ -269,51 +277,6 @@ def soundpush():
     return Response(response=response_pickled, status=200, mimetype="application/json")
 
 
-
-@app.route('/soundpushMOCK', methods=['POST'])
-def soundpushMOCK():
-    r = request
-
-    logging.info('POST to /soundpush {} '.format(r.content_type))
-    logging.info('content_type: {}'.format(r.content_type))
-    logging.info('form attrib: {}'.format(r.form))
-    logging.info('data attrib: {}'.format(r.data))
-    logging.info('files attrib: {}'.format(r.files))
-
-    if 'data' in r.files:
-        file = r.files['data']
-    else:
-        file = 'MOCK'
-        logging.info('MOCK DATA MOCK'.format())
-
-    currtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    if file:
-        #filename = file.filename
-        path_audio_file_saved = os.path.join('./SERVER INCOMING', 'audio'+currtime)
-        logging.info("MOCK File saved; {}".format(path_audio_file_saved))
-        #file.save(path_audio_file_saved)
-        #return redirect(url_for('uploaded_file',
-        #                        filename=filename))
-
-
-
-    #nparr = np.fromstring(r.data, np.uint8)
-
-    #logging.info('Audio data received. size={}'.format(nparr.shape))
-
-    # do some fancy processing here....
-    #
-    #
-
-    # build a response dict to send back to client
-    #response = {'message': 'wav file recieved size={}'.format(nparr.shape)}
-    response = {'message': 'MOCK audio file recieved'}
-
-    # encode response using jsonpickle
-    response_pickled = jsonpickle.encode(response)
-
-    return Response(response=response_pickled, status=200, mimetype="application/json")
 
 
 
