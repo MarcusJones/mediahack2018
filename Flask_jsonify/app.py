@@ -7,9 +7,11 @@ import os
 import logging
 from time import gmtime, strftime
 import datetime
+#import glob
+import re
 #from astropy._erfa.core import ld
 logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)8s %(message)s',
+                    format='%(asctime)s %(funcName)25s() %(levelname)-9s %(message)s',
                     datefmt="%Y-%m-%d %H:%M:%S",
                     )
 import operator
@@ -99,6 +101,56 @@ def imagepush():
     
     return Response(response=response_pickled, status=200, mimetype="application/json")
 
+def reload_audio(folder_path):
+    logging.info("Retrieving audio from {}".format(folder_path))
+    audio_files = get_files_by_name_ext(folder_path,'audio','audio')
+    
+    dated_list = list()
+    for f in audio_files:
+        fname, _ = os.path.splitext(f)
+        
+        #print(fname)
+        fname = fname.replace('audio','')
+        #print(fname)
+        this_timestamp = datetime.datetime.strptime(fname, "%Y-%m-%d %H:%M:%S")
+        #print(this_timestamp)
+        dated_list.append((this_timestamp,f))
+    
+    #print(dated_list)
+    dated_list = sorted(dated_list, key=lambda x: x[0])
+    #print(dated_list)
+    most_recent = dated_list.pop()
+    #print(most_recent)
+    logging.info("Most recent audio file {}".format(most_recent[1]))
+    
+    path_most_recent = os.path.join(folder_path,most_recent[1])
+    
+    #result = np.load(path_most_recent)
+    
+    blocksize = 1024
+    
+    #offset = 0
+    with open(path_most_recent, "rb") as f:
+        block = f.read(blocksize)
+        str = ""
+        print(len(block))
+        #for ch in block:
+        #    str += hex(ord(ch))+" "
+        print(str)    
+#         
+#     
+#     try:
+#         byte = f.read(1)
+#         while byte != "":
+#             # Do stuff with byte.
+#             byte = f.read(1)
+#     finally:
+#         f.close()
+#         
+#     print(byte)
+#     
+
+        
 def process_audio(fpath):
 
     # Load the file
@@ -110,8 +162,49 @@ def process_audio(fpath):
      
     return TEMP_ARRAY
 
+def get_files_by_name_ext(folder_path, search_name, search_ext):
+#     all_files = list()
+#     for root, dirs, files in os.walk(folder_path):
+#         for this_name in files:
+#             thisFilePath = os.path.join(root, this_name)
+#             all_files.append(thisFilePath)
+#     
+    #files = 
+        
+    # Filter
+    all_files = os.listdir(folder_path)
+    filtered_file_list = [f for f in os.listdir(folder_path) if re.match(r'^audio.*\.audio', f)]
+    
+    #for f in os.listdir(folder_path):
+    #    print(f)
+    
+    print(filtered_file_list)
+    logging.info("Found {} {} files matching '{}' in {}, out of {} total files".format(len(filtered_file_list),
+                                                                           search_ext,
+                                                                           search_name, 
+                                                                           folder_path, 
+                                                                           len(all_files)))
+
+    return filtered_file_list
+
+
+
+
 def predict(audio_array):
     logging.info("Predicting on array {}".format(audio_array.shape))
+
+def save_file(file_object):
+    currtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    #filename = file.filename
+    path_audio_file_saved = os.path.join('./SERVER INCOMING', 'audio'+currtime)
+    try: 
+        file.save(path_audio_file_saved)
+        logging.info("File saved; {}".format(path_audio_file_saved))
+    except:
+        logging.error("MOCK File saved; {} MOCK".format(path_audio_file_saved))
+  
+    return 
 
 @app.route('/soundpush', methods=['POST'])
 def soundpush():
@@ -126,31 +219,19 @@ def soundpush():
     logging.info('data attrib: {}'.format(r.data))
     logging.info('files attrib: {}'.format(r.files))
     
+    #------------------------------------------------------------------ Get file
     if 'data' in r.files:
         file = r.files['data']
     else:
-        raise
+        logging.error("****** NO ['data' attribute in r.files!".format())
         file = 'MOCK'
-        logging.info('MOCK DATA MOCK'.format())
         
+        
+    #----------------------------------------------------------------- Save file
+    save_file(file)
     
-    
-    currtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    # if user does not select file, browser also
-    # submit a empty part without filename
-    #if file.filename == '':
-    #    flash('No selected file')
-    #    logging.info('No selected file'.format())
-    #    return redirect(r.url)
-    
-    if file:
-        #filename = file.filename
-        path_audio_file_saved = os.path.join('./SERVER INCOMING', 'audio'+currtime)
-        logging.info("File saved; {}".format(path_audio_file_saved))
-        file.save(path_audio_file_saved)
-        #return redirect(url_for('uploaded_file',
-        #                        filename=filename))    
+    #-------------------------------------------------------------------- Reload
+    audio_data = reload_audio("./SERVER INCOMING")
     
     
     
@@ -178,10 +259,7 @@ def soundpushMOCK():
     r = request
     
     logging.info('POST to /soundpush {} '.format(r.content_type))
-    
-    #print("DATA",r.data)
     logging.info('content_type: {}'.format(r.content_type))
-    
     logging.info('form attrib: {}'.format(r.form))
     logging.info('data attrib: {}'.format(r.data))
     logging.info('files attrib: {}'.format(r.files))
@@ -189,26 +267,16 @@ def soundpushMOCK():
     if 'data' in r.files:
         file = r.files['data']
     else:
-        raise
         file = 'MOCK'
         logging.info('MOCK DATA MOCK'.format())
-        
-    
-    
+   
     currtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    # if user does not select file, browser also
-    # submit a empty part without filename
-    #if file.filename == '':
-    #    flash('No selected file')
-    #    logging.info('No selected file'.format())
-    #    return redirect(r.url)
     
     if file:
         #filename = file.filename
         path_audio_file_saved = os.path.join('./SERVER INCOMING', 'audio'+currtime)
-        logging.info("File saved; {}".format(path_audio_file_saved))
-        file.save(path_audio_file_saved)
+        logging.info("MOCK File saved; {}".format(path_audio_file_saved))
+        #file.save(path_audio_file_saved)
         #return redirect(url_for('uploaded_file',
         #                        filename=filename))    
     
@@ -224,7 +292,7 @@ def soundpushMOCK():
     
     # build a response dict to send back to client
     #response = {'message': 'wav file recieved size={}'.format(nparr.shape)}
-    response = {'message': 'audio file recieved'}
+    response = {'message': 'MOCK audio file recieved'}
 
     # encode response using jsonpickle
     response_pickled = jsonpickle.encode(response)
